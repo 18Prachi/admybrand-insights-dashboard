@@ -9,6 +9,7 @@ import MetricsCards from '@/components/MetricsCards';
 import ChartsSection from '@/components/ChartsSection';
 import DataTable from '@/components/DataTable';
 import { generateMockData } from '@/lib/mockData';
+import RealTimeRevenue from "@/components/RealTimeRevenue";
 
 export default function Dashboard() {
   const { theme, setTheme } = useTheme();
@@ -68,6 +69,11 @@ export default function Dashboard() {
           <p className="text-gray-600 dark:text-gray-300">
             Here's your omnichannel advertising performance overview
           </p>
+        </div>
+
+        {/* Real-Time Revenue Section */}
+        <div className="mb-8">
+          <RealTimeRevenue />
         </div>
 
         {/* Metrics Cards */}

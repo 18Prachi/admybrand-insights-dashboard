@@ -8,6 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Search, Filter, ArrowUpDown, ChevronLeft, ChevronRight, Radio, Tv, Smartphone, Keyboard as Billboard, UserCheck, Newspaper } from 'lucide-react';
+import { Parser } from "json2csv";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { Download, FileText } from "lucide-react";
 
 interface Campaign {
   id: string;
@@ -94,6 +98,71 @@ export default function DataTable({ data }: DataTableProps) {
     }
   };
 
+  const exportToCSV = () => {
+    try {
+      const parser = new Parser();
+      const csv = parser.parse(filteredAndSortedData);
+  
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+  
+      link.setAttribute("href", url);
+      link.setAttribute("download", "campaigns.csv");
+      link.style.visibility = "hidden";
+  
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error exporting CSV:", error);
+    }
+  };
+  
+  const exportToPDF = () => {
+    try {
+      const doc = new jsPDF();
+  
+      doc.setFontSize(16);
+      doc.text("Campaign Report", 14, 15);
+  
+      const tableColumns = ["Name", "Channel", "Status", "Budget", "Spent", "Impressions", "Clicks", "Conversions", "ROAS"];
+      const tableRows = filteredAndSortedData.map((item) => [
+        item.name,
+        item.channel,
+        item.status,
+        `$${item.budget.toLocaleString()}`,
+        `$${item.spent.toLocaleString()}`,
+        item.impressions.toLocaleString(),
+        item.clicks.toLocaleString(),
+        item.conversions.toLocaleString(),
+        `${item.roas.toFixed(1)}x`,
+      ]);
+  
+      autoTable(doc, {
+        head: [tableColumns],
+        body: tableRows,
+        startY: 25,
+        styles: {
+          fontSize: 10,
+          cellPadding: 3,
+        },
+        headStyles: {
+          fillColor: [71, 85, 105],
+          textColor: 255,
+          fontStyle: "bold",
+        },
+        alternateRowStyles: {
+          fillColor: [248, 250, 252],
+        },
+      });
+  
+      doc.save("campaigns.pdf");
+    } catch (error) {
+      console.error("Error exporting PDF:", error);
+    }
+  };
+  
   return (
     <Card className="backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 border-white/20 dark:border-gray-700/50">
       <CardHeader>
@@ -138,6 +207,17 @@ export default function DataTable({ data }: DataTableProps) {
             </SelectContent>
           </Select>
         </div>
+        <div className="flex flex-col sm:flex-row gap-3 mt-4">
+          <Button onClick={exportToCSV} variant="outline" className="flex items-center gap-2">
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
+          <Button onClick={exportToPDF} variant="outline" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Export PDF
+          </Button>
+        </div>
+
       </CardHeader>
       
       <CardContent>
