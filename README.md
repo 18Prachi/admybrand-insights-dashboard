@@ -8,8 +8,8 @@ A sleek, data-rich, and responsive analytics dashboard built using **Next.js**, 
 
 ## 🚀 Live Demo
 
-👉 [View Demo on Vercel](https://your-vercel-app-url.vercel.app/)  
-👉 [GitHub Repo](https://github.com/yourusername/admybrand-insights-dashboard)
+👉 [View Demo on Vercel](https://admybrand-insights-dashboard-three.vercel.app/)  
+👉 [GitHub Repo](https://github.com/18Prachi/admybrand-insights-dashboard)
 
 ---
 
